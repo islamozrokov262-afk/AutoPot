@@ -21,7 +21,7 @@ public class AutoPotMod implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        // Биндим на клавишу G
+        // Регистрируем клавишу с категорией (по умолчанию G)
         potKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
                 "key.autopot.throw",
                 InputConstants.Type.KEYSYM,
@@ -32,7 +32,6 @@ public class AutoPotMod implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (client.player == null) return;
 
-            // Шаг 0: Ждем нажатия кнопки
             if (state == 0 && potKey.consumeClick()) {
                 int potSlot = findSplashPotion(client.player);
                 if (potSlot != -1) {
@@ -41,12 +40,10 @@ public class AutoPotMod implements ClientModInitializer {
                     state = 1;
                 }
             } 
-            // Шаг 1: Кидаем зелье (нажимаем ПКМ)
             else if (state == 1) {
                 client.options.keyUse.setDown(true);
                 state = 2;
             }
-            // Шаг 2: Отпускаем ПКМ и возвращаем меч
             else if (state == 2) {
                 client.options.keyUse.setDown(false);
                 client.player.getInventory().setSelectedSlot(oldSlot);
